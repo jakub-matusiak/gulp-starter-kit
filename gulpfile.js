@@ -9,51 +9,51 @@ const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
 
 function html(done) {
-  src('./src/*.html')
-  .pipe(dest('./dist/'))
+  src('src/*.html')
+  .pipe(dest('dist'))
   done();
 }
 
 function css(done) {
-  src('./src/scss/main.scss')
+  src('src/scss/main.scss')
   .pipe(sourcemaps.init())
   .pipe(sass())
   .on("error", sass.logError)
   .pipe(autoprefixer('last 4 versions'))
   .pipe(cleancss())
   .pipe(sourcemaps.write('.'))
-  .pipe(dest('./dist/css'))
+  .pipe(dest('dist/css'))
   done();
 }
 
 function js(done) {
-  src('./src/js/**/*.js')
+  src('src/js/**/*.js')
   .pipe(sourcemaps.init())
   .pipe(babel({
     presets: ['@babel/preset-env']
   }))
   .pipe(uglify({mangle: { toplevel: true }}))
   .pipe(sourcemaps.write('.'))
-  .pipe(dest('./dist/js'))
+  .pipe(dest('dist/js'))
   done();
 }
 
 function img(done) {
-  src('./src/img/**/*')
-  .pipe(dest('./dist/img'))
+  src('src/img/**/*')
+  .pipe(dest('dist/img'))
   done();
 }
 
 function watchFiles() {
   watch('src/*.html', series(html, reload));
-  watch('src/scss/**/*', series(css, reload));
+  watch('src/scss/**/*.scss', series(css, reload));
   watch('src/js/*.js', series(js, reload));
   watch('src/img/**/*', series(img, reload));
 }
 
 function sync() {
   browserSync.init({
-    server: './dist',
+    server: 'dist',
     open: false
   });
 }
@@ -64,7 +64,7 @@ function reload(done) {
 }
 
 function clean() {
-  return del('./dist/');
+  return del('dist');
 }
 
 exports.default = parallel(html, css, js, img, watchFiles, sync);
